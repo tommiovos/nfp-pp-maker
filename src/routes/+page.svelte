@@ -46,19 +46,33 @@
             // Calculate the aspect ratio of the uploaded image
             const aspectRatio = img.width / img.height;
 
-            // Set the height to the desired height and calculate the width based on the aspect ratio
-            const height = desiredHeight;
-            const width = height * aspectRatio;
+            let width, height, x, y;
+
+            if (aspectRatio > 1) {
+                width = desiredWidth;
+                height = desiredWidth / aspectRatio;
+                if (height < desiredHeight) {
+                    height = desiredHeight;
+                    width = desiredHeight * aspectRatio;
+                }
+            } else {
+                height = desiredHeight;
+                width = desiredHeight * aspectRatio;
+                if (width < desiredWidth) {
+                    width = desiredWidth;
+                    height = desiredWidth / aspectRatio;
+                }
+            }
+
+            x = (desiredWidth - width) / 2;
+            y = (desiredHeight - height) / 2;
 
             // Set canvas dimensions to the desired size
             canvas.width = desiredWidth;
             canvas.height = desiredHeight;
 
-            // Calculate the x-coordinate to center the image within the canvas
-            const x = (desiredWidth - width) / 2;
-
             // Draw the uploaded image onto the canvas, preserving aspect ratio and centering
-            ctx.drawImage(img, 0, 0, img.width, img.height, x, 0, width, height);
+            ctx.drawImage(img, 0, 0, img.width, img.height, x, y, width, height);
 
             // Draw the overlay image on top of the resized image
             drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight);
