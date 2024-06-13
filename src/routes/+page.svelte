@@ -15,6 +15,8 @@
 
             const desiredWidth = 500; // Desired width of the canvas
             const desiredHeight = 500; // Desired height of the canvas
+            
+            overlayImage.onload = () => {drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight)};
 
             imageUpload.addEventListener('change', () => {
             const file = imageUpload.files[0];
@@ -59,9 +61,13 @@
             ctx.drawImage(img, 0, 0, img.width, img.height, x, 0, width, height);
 
             // Draw the overlay image on top of the resized image
-            ctx.drawImage(overlayImage, 0, 0, desiredWidth, desiredHeight);
+            drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight);
 
             return canvas.toDataURL('image/png');
+        }
+
+        function drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight) {
+            ctx.drawImage(overlayImage, 0, 0, desiredWidth, desiredHeight);
         }
         
     });
@@ -74,7 +80,7 @@
     <span class="logo-top-bg"></span>
 
     <h1>Créateur de PP Nouveau Front Populaire</h1>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="500" height="500"></canvas>
     <div class="btns">
         <label for="image-upload" class="upload">
             Importer une image
@@ -105,21 +111,31 @@
         font-size: 2rem;
         font-family: "Radio Canada Big", sans-serif;
         grid-area: title;
+        text-align: center;
+        width: 100%;
         padding-top: 2rem;
     }
 
     canvas {
         grid-area: preview;
+        width: 100%;
+        border-radius: 0.5rem;
+        background-color: rgb(197, 197, 197);
+        box-shadow: -33px 117px 49px rgba(0, 0, 0, 0.01), -19px 66px 41px rgba(0, 0, 0, 0.05), -8px 29px 30px rgba(0, 0, 0, 0.09), -2px 7px 17px rgba(0, 0, 0, 0.1);
     }
 
     .btns {
         grid-area: btns;
+        width: 100%;
         display: flex;
         gap: 1rem;
+        align-items: center;
+        justify-content: center;
     }
 
     .btns > * {
         font-size: 1rem;
+        text-align: center;
     }
     
     .upload {
@@ -201,6 +217,16 @@
         }
         100% {
             transform: translateX(0%);
+        }
+    }
+
+    @media screen and (max-width: 800px) {
+        .btns {
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 1.75rem;
         }
     }
 </style>
