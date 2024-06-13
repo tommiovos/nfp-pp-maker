@@ -177,7 +177,7 @@
     .logo-top-bg {
         width: 100%;
         height: 30px;
-        background-image: url(tileable.jpg);
+        background-image: url(./tileable.jpg);
         background-repeat: repeat-x;
         background-size: 460px 32px;
         position: absolute;
