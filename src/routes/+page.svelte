@@ -11,7 +11,7 @@
             const downloadBtn = document.getElementById('download-btn');
 
             const overlayImage = new Image();
-            overlayImage.src = 'fp-overlay.png'; // Replace with the path to your overlay image
+            overlayImage.src = 'rounded-overlay.png'; // Replace with the path to your overlay image
 
             const desiredWidth = 500; // Desired width of the canvas
             const desiredHeight = 500; // Desired height of the canvas
@@ -119,7 +119,7 @@
     canvas {
         grid-area: preview;
         width: 100%;
-        border-radius: 0.5rem;
+        border-radius: 50rem;
         background-color: rgb(197, 197, 197);
         box-shadow: -33px 117px 49px rgba(0, 0, 0, 0.01), -19px 66px 41px rgba(0, 0, 0, 0.05), -8px 29px 30px rgba(0, 0, 0, 0.09), -2px 7px 17px rgba(0, 0, 0, 0.1);
     }
