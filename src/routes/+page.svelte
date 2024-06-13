@@ -11,7 +11,7 @@
             const downloadBtn = document.getElementById('download-btn');
 
             const overlayImage = new Image();
-            overlayImage.src = 'rounded-overlay.png'; // Replace with the path to your overlay image
+            overlayImage.src = 'overlay-2.png'; // Replace with the path to your overlay image
 
             const desiredWidth = 500; // Desired width of the canvas
             const desiredHeight = 500; // Desired height of the canvas
