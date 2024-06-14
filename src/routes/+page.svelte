@@ -234,6 +234,12 @@
         }
     }
 
+    @media screen and (min-width:800px) and (orientation: portrait) {
+        .main-grid {
+            grid-template-columns: 15vw auto 15vw;
+        }
+    }
+
     @media screen and (max-width: 800px) {
         .btns {
             flex-direction: column;
