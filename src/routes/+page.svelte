@@ -2,34 +2,25 @@
     import { onMount } from "svelte";
     import { browser } from '$app/environment'; 
     let uploadedImage;
+    let overlayImage;
+    let canvas;
+    let ctx;
+    let imageUpload;
+    let downloadBtn;
+    const desiredWidth = 500; // Desired width of the canvas
+    const desiredHeight = 500; // Desired height of the canvas
 
     onMount(() => {
         if (browser) {
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            const imageUpload = document.getElementById('image-upload');
-            const downloadBtn = document.getElementById('download-btn');
+            canvas = document.getElementById('canvas');
+            ctx = canvas.getContext('2d');
+            imageUpload = document.getElementById('image-upload');
+            downloadBtn = document.getElementById('download-btn');
 
-            const overlayImage = new Image();
-            overlayImage.src = 'overlay-2.png'; // Replace with the path to your overlay image
-
-            const desiredWidth = 500; // Desired width of the canvas
-            const desiredHeight = 500; // Desired height of the canvas
-            
-            overlayImage.onload = () => {drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight)};
+            setOverlayImage('overlay-2.png');
 
             imageUpload.addEventListener('change', () => {
-            const file = imageUpload.files[0];
-            const reader = new FileReader();
-
-            reader.onload = () => {
-                const img = new Image();
-                img.onload = () => { uploadedImage = changeImg(img, canvas, desiredHeight, desiredWidth, ctx, overlayImage) };
-                img.src = reader.result;
-            };
-
-            reader.readAsDataURL(file);
-            downloadBtn.classList.add("active");
+                redrawPP();
             });
 
             downloadBtn.addEventListener('click', () => {
@@ -41,8 +32,10 @@
                 }
             });
         }
+        
+    });
 
-        function changeImg(img, canvas, desiredHeight, desiredWidth, ctx, overlayImage) {
+    function changeImg(img) {
             // Calculate the aspect ratio of the uploaded image
             const aspectRatio = img.width / img.height;
 
@@ -75,16 +68,46 @@
             ctx.drawImage(img, 0, 0, img.width, img.height, x, y, width, height);
 
             // Draw the overlay image on top of the resized image
-            drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight);
+            drawOverlayImage();
 
             return canvas.toDataURL('image/png');
         }
 
-        function drawOverlayImage(ctx, overlayImage, desiredWidth, desiredHeight) {
-            ctx.drawImage(overlayImage, 0, 0, desiredWidth, desiredHeight);
+    function clearCanvas() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function setOverlayImage(src) {
+        overlayImage = new Image();
+        overlayImage.src = src;
+        overlayImage.onload = () => {
+            drawOverlayImage(true);
+            if (uploadedImage != null) {
+                redrawPP();
+            }
+        };
+    }
+
+    function redrawPP() {
+        const file = imageUpload.files[0];
+        const reader = new FileReader();
+
+        reader.onload = () => {
+            const img = new Image();
+            img.onload = () => { uploadedImage = changeImg(img) };
+            img.src = reader.result;
+        };
+
+        reader.readAsDataURL(file);
+        downloadBtn.classList.add("active");
+    }
+
+    function drawOverlayImage(clear=false) {
+        if (clear) {
+            clearCanvas();
         }
-        
-    });
+        ctx.drawImage(overlayImage, 0, 0, desiredWidth, desiredHeight);
+    }
 
     
 </script>
@@ -95,6 +118,21 @@
 
     <h1>Créateur de PP Nouveau Front Populaire</h1>
     <canvas id="canvas" width="500" height="500"></canvas>
+
+    <div class="options-cont">
+        <p>Style de PP</p>
+        <div class="options">
+            <label for="overlay-classique" on:click={() => {setOverlayImage('overlay-2.png')}}>Cercle
+                <input type="radio" name="overlay" id="overlay-classique" checked>        
+            </label>
+
+            <label for="overlay-bandes" on:click={() => {setOverlayImage('overlay-bandes.png')}}>Bandes
+                <input type="radio" name="overlay" id="overlay-bandes">    
+            </label>        
+        </div>    
+    </div>
+    
+    
     <div class="btns">
         <label for="image-upload" class="upload">
             Importer une image
@@ -138,6 +176,40 @@
         box-shadow: -33px 117px 49px rgba(0, 0, 0, 0.01), -19px 66px 41px rgba(0, 0, 0, 0.05), -8px 29px 30px rgba(0, 0, 0, 0.09), -2px 7px 17px rgba(0, 0, 0, 0.1);
     }
 
+    .options-cont {
+        grid-area: options;  
+        display: flex;
+        flex-direction: column;
+        justify-content: center;  
+        align-items: center;
+    }
+    
+    .options-cont > p {
+        font-size: 1.25rem;
+    }
+
+    .options-cont * {
+        font-family: "Radio Canada Big", sans-serif;
+    }
+
+    .options {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .options > * {
+        color: white;
+        padding: 1rem;
+        background-color: #f5759d;
+        border: 2px solid #E70E53;
+        border-radius: 1rem;
+        width: 8rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.1rem;
+    }
+
     .btns {
         grid-area: btns;
         width: 100%;
@@ -162,7 +234,7 @@
         border-radius: 0.5rem;
     }
 
-    input {
+    .upload input {
         display: none;
         padding: 1rem;
     }
@@ -195,6 +267,7 @@
         grid-template-areas: 
             ". title ."
             ". preview ."
+            ". options ."
             ". btns ."
             ;
         gap: 2rem;
@@ -234,9 +307,19 @@
         }
     }
 
+    @media screen and (max-width: 1400px) and (orientation: landscape) {
+        canvas {
+            max-width: 30vw;
+        }
+    }
+
     @media screen and (min-width:800px) and (orientation: portrait) {
         .main-grid {
             grid-template-columns: 15vw auto 15vw;
+        }
+        canvas {
+            max-height: 40vh;
+            max-width: 40vh;
         }
     }
 
